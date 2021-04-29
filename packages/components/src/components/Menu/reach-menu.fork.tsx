@@ -35,6 +35,7 @@ import {
   useDescendantsInit,
   useDescendantKeyDown,
 } from '@reach/descendants';
+import { useForceUpdate } from '@reach/utils/use-force-update';
 import {
   checkStyles,
   createNamedContext,
@@ -147,6 +148,8 @@ export const Menu: React.FC<MenuProps> = ({
     selectCallbacks,
     state,
   };
+
+  console.log(state);
 
   // When the menu is open, focus is placed on the menu itself so that
   // keyboard navigation is still possible.
@@ -618,6 +621,7 @@ export const MenuItems = forwardRefWithAs<MenuItemsProps, 'div'>(
 
     useEffect(() => {
       if (selectionIndex > menuItems.length - 1) {
+        console.log('1', selectionIndex, menuItems);
         // If for some reason our selection index is larger than our possible
         // index range (let's say the last item is selected and the list
         // dynamically updates), we need to select the last item in the list.
@@ -638,6 +642,7 @@ export const MenuItems = forwardRefWithAs<MenuItemsProps, 'div'>(
         prevSelectionIndex === selectionIndex &&
         menuItems[selectionIndex] !== prevSelected
       ) {
+        console.log('2', selectionIndex, menuItems);
         dispatch({
           type: SELECT_ITEM_AT_INDEX,
           payload: {
@@ -685,6 +690,18 @@ export const MenuItems = forwardRefWithAs<MenuItemsProps, 'div'>(
                 dispatch({ type: CLICK_MENU_ITEM });
               }
             }
+            break;
+          case 'ArrowLeft':
+          case 'ArrowRight':
+            let selectedItem = menuItems.find(
+              item => item.index === selectionIndex
+            );
+
+            if (selectedItem) {
+              selectCallbacks.current[selectedItem.index]?.();
+              focus(selectedItem.element);
+            }
+
             break;
           case 'Escape':
             focus(buttonRef.current);

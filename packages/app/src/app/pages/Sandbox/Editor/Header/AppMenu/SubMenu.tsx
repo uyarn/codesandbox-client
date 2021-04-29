@@ -63,6 +63,9 @@ const SubMenu: React.FC<{
                   aria-label={label}
                   onMouseEnter={() => setActiveItem(item.submenuId)}
                   onMouseLeave={() => setActiveItem(undefined)}
+                  onSelect={() =>
+                    setActiveItem(prev => (prev ? undefined : item.submenuId))
+                  }
                 >
                   <Stack justify="space-between">
                     <Text size={2}>
